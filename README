@@ -1,0 +1,122 @@
+mysql + redis + server.go
+
+附加：nginx  #分发
+附加：sphinx #索引
+
+go run build.go  组建handler
+go run build.go bak  备份项目文件
+go run build.go clean  备份项目文件，且，清除项目文件
+
+
+
+当前目录： GOPATH
+server.go      启动文件
+run.go         保护进程
+shell/         运行shell
+src/server/*   项目文件
+public/        静态文件
+templates/                模板文件*
+src/server/web/model      model文件*
+src/server/web/handler/   逻辑文件*
+config/                配置文件
+
+
+
+如果作为接口，在不需要apidoc时，请把config/config.ini中设置
+GZIP = false
+# 以下，从上到下，消耗资源越来越重，STATIC最少，RENDER最多
+STATIC = false  # 静态文件，看情况而定
+REDIS = true    # 如果使用session，需要打开，其他看情况 
+SESSION = false # 接口需要session
+RENDER = false  # 模板，接口中不需要，需要apidoc时才打开
+
+golang交叉编译命令
+GOOS=linux GOARCH=amd64 go build server.go
+
+使用此方法，运行编译需安装apt-get install gccgo
+go build -compiler gccgo server.go
+
+把Go程序变小的办法是:
+go build -ldflags "-s -w"
+-s去掉符号表,panic时候的stack trace就没有任何文件名/行号信息了，这个等价于普通C/C++程序被strip的效果，
+-w去掉DWARF调试信息，得到的程序就不能用gdb调试了。 -s和-w也可以分开使用.
+
+
+#scp -r test.sh root@www.eyuanonline.com:/root/xt/ #文件上传
+#scp -r root@www.eyuanonline.com:/root/xt/文件 . #文件下载
+#tcpdump -i lo -s 0 -l -w - dst  port 3306 | strings #抓取MySQL的sql语句，tcpdump linux抓包工具
+#包库http://studygolang.com/p/awesome-go
+#redis-cli -a redis123 keys "popularity:*"|xargs redis-cli -a redis123 del  redis批量删除
+
+#用 Gob 传输数据 "encoding/gob"
+
+#用python开启一个微型的HTTP服务器
+#python -m SimpleHTTPServer           
+
+[docker使用]
+-t - 分配一个（伪）tty (link is external) 
+-i - 交互模式 (so we can interact with it) 
+-d  后台运行
+-p 127.0.0.1:33301:22 暴露端口
+-v /home/dock/Downloads:/usr/Download       通过-v参数，冒号前为宿主机目录，必须为绝对路径，冒号后为镜像内挂载的路径。
+detach：Ctrl-P + Ctrl-Q 
+退出：Ctrl-Dorexit 
+attach:docker attach CONTAINER-ID 
+#安装docker-io
+#docker search ubuntu  查询镜像
+#docker images         查看镜像
+#docker rm ecab8972380a         删除容器
+#docker rmi ecab8972380a         删除镜像
+#docker ps -a          查看所有镜像（-a表示所有，-q表示只列出镜像id）
+#docker pull ubuntu:14:04    获取镜像
+#docker create -it -v /root/:/data/ -p 0.0.0.0:8888:80 --name mytest ubuntu    创建一个不运行的容器(-it表示具有输入输出，nagocat表示创建容器的名称，ubuntu表示镜像名称)
+#docker run -it ubuntu /bin/bash                     根据Ubuntu镜像创建容器并直接运行
+#docker start ecab8972380a            运行一个容器不进入shell，加上-a -i 后可立即进入shell
+#docker exec -it ecab8972380a /bin/bash     在指定容器中执行指定命令，[ctrl+D]退出后不会终止容器运行
+#docker export 7691a814370e > ubuntu.tar    导出容器
+#cat ubuntu.tar |docker import - test/ubuntu:v1.0    可以使用 docker import 从容器快照文件中再导入为镜像
+#docker commit -m="has update" -a="runoob" e218edb10161 runoob/ubuntu:v2    提交镜像-m描述 -a指定镜像作者
+#docker save busybox-1 > /home/save.tar                        保存镜像
+#docker load < /home/save.tar                                  加载镜像
+
+
+使用pipework固定分配dockerip
+在运行或创建容器时，增加--net='none'    自定义固定ip
+然后，使用pipework docker0 test 192.168.42.12/24@192.168.42.1分配ip，其中test为容器名或id，docker0是网桥
+pipework安装步骤
+# wget https://github.com/jpetazzo/pipework/archive/master.zip
+# unzip pipework-master.zip
+# cp pipework-master/pipework  /usr/local/bin/
+# chmod +x /usr/local/bin/pipework
+
+#docker inspect --format='{{.NetworkSettings.IPAddress}}' $(docker ps -a -q)  查看所有容器ip
+
+#ubuntu下新建网桥，brctl安装，apt-get install bridge-utils
+#brctl addbr br0 #创建网桥
+#brctl addif br0 eth0  #连接，创建网桥，并将实体网卡与虚拟网卡都连接到网桥上
+#ifconfig br0 XXX.XXX.XXX.XXX netmask 255.255.255.0 up 网桥ip
+
+#设置专用sftp的用户
+#创建账户时不允许账户登录shell并且指定特定家目录的命令：
+#useradd -d /var/www/hgfuli.yundapian.com -s /sbin/nologin hgfuli  
+#新建用户组，专门用于sftp
+#sudo groupadd sftpusers  
+#sudo usermod -G sftpusers hgfuli
+#修改/etc/ssh/sshd_config文件
+#需要注释掉Subsystem，UsePAM ,并添加以上代码：
+#Subsystem sftp /usr/lib/openssh/sftp-server    
+#UsePAM yes    
+Subsystem sftp internal-sftp  
+Match Group sftpusers  
+ChrootDirectory %h 
+保存，并重启ssh
+sudo /etc/init.d/ssh restart 
+修改目录权限
+必须满足以下条件：
+ChrootDirectory设置的目录权限及上级，属主和属组必须是root
+ChrootDirectory设置的目录权限及上级，只有属主能拥有写权限，最大只能是755
+sudo chown root:root /home/ftpuser  
+sudo chmod 755 /home/ftpuser  
+之后可以在/home/ftpuser下建立拥有全部权限的文件夹，进行sftp操作
+sudo mkdir /home/ftpuser/upload  
+sudo chmod 777 /home/ftpuser/upload 
