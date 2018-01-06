@@ -26,4 +26,6 @@ func init() {
 	r.POST("/ddy/word", mygin.Handler(addword))
 	r.POST("/ddy/updateword/:id", mygin.Handler(updateword))
 	r.GET("/ddy/wordinfo/:id", mygin.Handler(wordinfo))
+
+	r.GET("/ddy/banner", mygin.Handler(banner))
 }
