@@ -28,4 +28,7 @@ func init() {
 	r.GET("/ddy/wordinfo/:id", mygin.Handler(wordinfo))
 
 	r.GET("/ddy/banner", mygin.Handler(banner))
+
+	r.GET("/ddy/cartoon", mygin.Handler(cartoon))
+	r.POST("/ddy/cartoon", mygin.Handler(addcartoon))
 }
