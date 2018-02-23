@@ -28,7 +28,7 @@ func Cartoon(uid string, i, j int) (map[int]map[string]string, string) {
 
 func DelCartoon(id, uid string) int {
 	db := mysqldb.GetConnect()
-	i, _ := db.SetTable("i_goods_word").Where("id = '" + id + "'").Update(map[string]interface{}{"del": 1})
+	i, _ := db.SetTable("cartoon").Where("id = '" + id + "'").Update(map[string]interface{}{"del": 1})
 
 	return i
 }
@@ -44,14 +44,14 @@ func AddCartoon(param map[string]interface{}) int {
 func UpdateCartoon(uid, id string, param map[string]interface{}) int {
 	db := mysqldb.GetConnect()
 	param["uid"] = uid
-	i, _ := db.SetTable("i_goods_word").Where("id = '" + id + "' AND del = 0").Update(param)
+	i, _ := db.SetTable("cartoon").Where("id = '" + id + "' AND del = 0").Update(param)
 	return i
 }
 
-func Cartooninfo(uid, id string) map[int]map[string]string {
+func CartoonInfo(uid, id string) map[int]map[string]string {
 	db := mysqldb.GetConnect()
 
-	ret := db.SetTable("i_goods_word").Where("id = '" + id + "'").FindOne()
+	ret := db.SetTable("cartoon").Where("id = '" + id + "'").FindOne()
 
 	// top := []map[string]string{}
 	// for _, i := range ret {

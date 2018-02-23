@@ -63,7 +63,7 @@ func delcartoon(c *mygin.IContext) {
 
 	//0：删除失败，1：删除成功
 	// return ddy.DelWord(c.Param("id"), info["id"])
-	if ddy.DelWord(c.Param("id"), info["id"]) == 0 {
+	if ddy.DelCartoon(c.Param("id"), info["id"]) == 0 {
 		c.String(200, "0")
 	} else {
 		c.String(200, "1")
@@ -74,10 +74,10 @@ func delcartoon(c *mygin.IContext) {
 func cartooninfo(c *mygin.IContext) {
 	info := c.GetSession("admin_info").(map[string]string)
 
-	words := ddy.Wordinfo(info["id"], c.Param("id"))
+	cartoons := ddy.CartoonInfo(info["id"], c.Param("id"))
 
-	if len(words) > 0 {
-		R.Write(c.Writer, map[string]interface{}{"words": words[1]})
+	if len(cartoons) > 0 {
+		R.Write(c.Writer, map[string]interface{}{"cartoons": cartoons[1]})
 	} else {
 		R.Write(c.Writer, map[string]interface{}{})
 	}
@@ -92,11 +92,14 @@ func updatecartoon(c *mygin.IContext) {
 	if path != "" {
 		p["imgurl"] = conf.GetString("config", "IMAGE_HOST") + path
 	}
+	p["uid"] = info["id"]
+	p["name"] = c.Request.FormValue("name")
 	p["classid"] = c.Request.FormValue("classid")
-	p["name"] = c.Request.FormValue("wordname")
-	p["remarks"] = c.Request.FormValue("remark")
-	p["wordbody"] = c.Request.FormValue("wordbody")
-	ddy.UpdateWord(info["id"], c.Param("id"), p)
+	p["author"] = c.Request.FormValue("author")
+	p["remarks"] = c.Request.FormValue("remarks")
+	p["abstract"] = c.Request.FormValue("abstract")
+	p["update_time"] = int(time.Now().Unix())
+	ddy.UpdateCartoon(info["id"], c.Param("id"), p)
 
 	c.Redirect(http.StatusFound, c.Request.Header.Get("Referer"))
 }

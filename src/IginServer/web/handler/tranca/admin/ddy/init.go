@@ -31,4 +31,7 @@ func init() {
 
 	r.GET("/ddy/cartoon", mygin.Handler(cartoon))
 	r.POST("/ddy/cartoon", mygin.Handler(addcartoon))
+	r.GET("/ddy/delcartoon/:id", mygin.Handler(delcartoon))
+	r.POST("/ddy/updatecartoon/:id", mygin.Handler(updatecartoon))
+	r.GET("/ddy/cartooninfo/:id", mygin.Handler(cartooninfo))
 }
