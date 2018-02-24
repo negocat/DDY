@@ -63,3 +63,61 @@ func CartoonInfo(uid, id string) map[int]map[string]string {
 
 	return ret
 }
+
+
+func CartoonEpisodes(id string) (map[int]map[string]string, string) {
+	db := mysqldb.GetConnect()
+
+	db.SetTable("cartoon_episodes").Fileds("cartoon_episodes.*").OrderBy("cartoon_episodes.sort")
+	ret := db.FindAll()
+
+	total := db.SetTable("cartoon_episodes").Fileds("COUNT(1) AS total").FindOne()
+	// top := []map[string]string{}
+	// for _, i := range ret {
+	//  if i["level"] == "1" {
+	//      top = append(top, i)
+	//  }
+	// }
+	// fmt.Println(top)
+
+	return ret, total[1]["total"]
+}
+
+func AddCartoonEpisodes(param map[string]interface{}) int {
+	db := mysqldb.GetConnect()
+
+	i, err := db.SetTable("cartoon_episodes").Insert(param)
+	fmt.Println(err)
+	
+	return i
+}
+
+func DelCartoonEpisodes(id, uid string) int {
+	db := mysqldb.GetConnect()
+	i, _ := db.SetTable("cartoon_episodes").Delete("id = '" + id + "'")
+
+	return i
+}
+
+func CartoonEpisodesInfo(uid, id string) map[int]map[string]string {
+	db := mysqldb.GetConnect()
+
+	ret := db.SetTable("cartoon_episodes").Where("id = '" + id + "'").FindOne()
+
+	// top := []map[string]string{}
+	// for _, i := range ret {
+	//  if i["level"] == "1" {
+	//      top = append(top, i)
+	//  }
+	// }
+	// fmt.Println(top)
+
+	return ret
+}
+
+func UpdateCartoonEpisodes(uid, id string, param map[string]interface{}) int {
+	db := mysqldb.GetConnect()
+	param["uid"] = uid
+	i, _ := db.SetTable("cartoon_episodes").Where("id = '" + id + "'").Update(param)
+	return i
+}

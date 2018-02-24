@@ -500,7 +500,12 @@ UploadImg.create = function(mid, url, func, path){
     document.getElementById(mid).ondrop = function(event){
         event.preventDefault();
 
-        UploadImg.addfile(file[0], event.dataTransfer.files, mid, cat);
+        var list = [];
+        for(var i =  event.dataTransfer.files.length - 1;i >= 0;i--){
+            list.push(event.dataTransfer.files[i]);
+        }
+
+        UploadImg.addfile(file[0], list, mid, cat);
     }
 }
 palert = {

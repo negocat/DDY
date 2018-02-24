@@ -34,4 +34,10 @@ func init() {
 	r.GET("/ddy/delcartoon/:id", mygin.Handler(delcartoon))
 	r.POST("/ddy/updatecartoon/:id", mygin.Handler(updatecartoon))
 	r.GET("/ddy/cartooninfo/:id", mygin.Handler(cartooninfo))
+	
+	r.GET("/ddy/cartoonEpisodes/:id", mygin.Handler(cartoonEpisodes))
+	r.POST("/ddy/cartoonEpisodes/:id", mygin.Handler(addCartoonEpisodes))
+	r.GET("/ddy/delCartoonEpisodes/:id", mygin.Handler(delCartoonEpisodes))
+	r.POST("/ddy/updateCartoonEpisodes/:id", mygin.Handler(updateCartoonEpisodes))
+	r.GET("/ddy/cartoonEpisodesInfo/:id", mygin.Handler(cartoonEpisodesInfo))
 }

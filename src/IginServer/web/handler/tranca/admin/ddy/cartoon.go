@@ -103,3 +103,73 @@ func updatecartoon(c *mygin.IContext) {
 
 	c.Redirect(http.StatusFound, c.Request.Header.Get("Referer"))
 }
+
+func cartoonEpisodes(c *mygin.IContext) {
+	// info := c.GetSession("admin_info").(map[string]string)
+
+	cartoonEpisodes, total := ddy.CartoonEpisodes(c.Param("id"))
+
+	c.HTML("tranca/admin/ddy/cartoonEpisodes.html", map[string]interface{}{
+		"request": c.Request,
+		"cartoonEpisodes":   cartoonEpisodes,
+		"total":   total,
+	})
+}
+
+func addCartoonEpisodes(c *mygin.IContext) {
+	info := c.GetSession("admin_info").(map[string]string)
+
+	// path, _ := upload.ImgSave(c.Request, "imgurl", wlogo, hlogo, info["id"])
+
+	param := map[string]interface{}{
+		"uid":         info["id"],
+		"title":        c.Request.FormValue("title"),
+		"sort":     c.Request.FormValue("sort"),
+		"imglist":  c.Request.FormValue("imgs"),
+		"cartoon_id":      c.Param("id"),
+		"createtime": int(time.Now().Unix()),
+	}
+	ddy.AddCartoonEpisodes(param)
+	c.Redirect(http.StatusFound, c.Request.Header.Get("Referer"))
+
+}
+
+func delCartoonEpisodes(c *mygin.IContext) {
+	info := c.GetSession("admin_info").(map[string]string)
+
+	//0：删除失败，1：删除成功
+	// return ddy.DelWord(c.Param("id"), info["id"])
+	if ddy.DelCartoonEpisodes(c.Param("id"), info["id"]) == 0 {
+		c.String(200, "0")
+	} else {
+		c.String(200, "1")
+	}
+
+}
+
+func cartoonEpisodesInfo(c *mygin.IContext) {
+	info := c.GetSession("admin_info").(map[string]string)
+
+	cartoons := ddy.CartoonEpisodesInfo(info["id"], c.Param("id"))
+
+	if len(cartoons) > 0 {
+		R.Write(c.Writer, map[string]interface{}{"cartoonEpisodes": cartoons[1]})
+	} else {
+		R.Write(c.Writer, map[string]interface{}{})
+	}
+}
+
+func updateCartoonEpisodes(c *mygin.IContext) {
+	info := c.GetSession("admin_info").(map[string]string)
+
+	param := map[string]interface{}{
+		"uid":         info["id"],
+		"title":        c.Request.FormValue("title"),
+		"sort":     c.Request.FormValue("sort"),
+		"imglist":  c.Request.FormValue("imgs"),
+		"createtime": int(time.Now().Unix()),
+	}
+	ddy.UpdateCartoonEpisodes(info["id"], c.Param("id"), param)
+
+	c.Redirect(http.StatusFound, c.Request.Header.Get("Referer"))
+}
