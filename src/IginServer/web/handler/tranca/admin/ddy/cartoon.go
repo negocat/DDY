@@ -26,7 +26,7 @@ func cartoon(c *mygin.IContext) {
 		page = 1
 	}
 	size = 10
-	cartoons, total := ddy.Cartoon(info["id"], (page-1)*size, size)
+	cartoons, total := ddy.Cartoon(info["id"], (page-1)*size, size, nil)
 
 	c.HTML("tranca/admin/ddy/cartoon.html", map[string]interface{}{
 		"request": c.Request,

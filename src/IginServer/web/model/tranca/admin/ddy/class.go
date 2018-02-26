@@ -23,6 +23,25 @@ func Class(uid string) map[int]map[string]string {
 	return ret
 }
 
+func ClassForLevel(level, topId int) map[int]map[string]string {
+	db := mysqldb.GetConnect()
+
+	where := fmt.Sprintf("level = '%d'", level)
+	where += fmt.Sprintf(" and upperid = '%d'", topId)
+
+	ret := db.SetTable("i_goods_class").Where(where).OrderBy("topid, list").FindAll()
+
+	// top := []map[string]string{}
+	// for _, i := range ret {
+	// 	if i["level"] == "1" {
+	// 		top = append(top, i)
+	// 	}
+	// }
+	// fmt.Println(top)
+
+	return ret
+}
+
 func DelClass(id, uid string) string {
 	db := mysqldb.GetConnect()
 
