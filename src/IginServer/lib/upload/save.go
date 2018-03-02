@@ -132,7 +132,7 @@ func ImgBase64Save(req *http.Request, w, h int, param ...string) (string, error)
 	if err != nil {
 		return path, err
 	}
-	err = image.Thumbnail(path, path, w, h)
+	// err = image.Thumbnail(path, path, w, h)
 	return path, err
 }
 
