@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>随手拍</title>
+	<!--[if lte IE 10]>
+		<style type="text/css" id="forIE9">
+			img{border:none;}
+		</style>
+	<![endif]-->	
+	<style type="text/css" id="styleID"></style>
+	<style type="text/css">
+		ul {list-style:none;}
+		input,textarea{overflow: hidden;white-space:nowrap;text-overflow: ellipsis;-ms-text-overflow: ellipsis;-o-text-overflow: ellipsis;-webkit-text-overflow: ellipsis;}
+		html,body,div,input,img,ul,li{padding:0;margin: 0;}
+		html,body,#main{width:100%;height:100%;overflow-x:hidden;overflow-y: auto;}
+		#main{opacity: 0;}
+		.outer{transition: opacity 0.7s;-webkit-transition: opacity 0.7s;-o-transition: opacity 0.7s;-moz-transition: opacity 0.7s;}
+		div.banner_div{width:100%;height:3rem;background-image: url(bg.jpg);background-position:center;background-repeat:no-repeat;background-size:100% 100%;text-align: center;position: relative;}
+		div.bottom_div{width:2.5rem;height:2.5rem;position:absolute;left:50%;margin-left:-1.25rem;top:50%;margin-top: -1.25rem;border-radius: 100%;background: rgba(255,255,255,0.4)}
+		div.bottom_div div.top_div{width:2rem;height:2rem;line-height:2rem;color:#6f95e5;font-size:0.48rem;font-weight:bold;position:absolute;left:50%;margin-left:-1rem;top:50%;margin-top: -1rem;border-radius: 100%;background: rgb(255,255,255)}
+		div.title{width: calc(100% - 0.4rem);height:0.8rem;line-height:0.8rem;border-bottom: 2px solid #0099cc;padding: 0 0.2rem;color:#6f95e5;font-size:0.28rem;font-weight:bold;}
+		ul.input_info{width: calc(100% - 0.4rem);padding: 0 0.2rem;padding-bottom:0.3rem;}
+		ul.input_info li{width: 100%;position: relative;margin-top: 0.3rem;display:block;}
+		ul.input_info li>span{width:1.45rem;height:0.6rem;line-height:0.6rem;color: #6f95e5;font-size: 0.24rem;display:block;position: absolute;left:0;top:0;}
+		ul.input_info li>span i.must{width:0.18rem;height:0.18rem;line-height: 0.18rem;font-size:0.24rem;color: #ff6666;position:absolute;top:0.1rem;right:0.05rem;}
+		ul.input_info li>input{width: calc(5.6rem - 22px);height:calc(0.6rem - 2px);font-size:0.24rem;padding:0 10px;line-height: 0.6rem;border:1px solid #6f95e5;border-radius: 5px;color: #333;display:block;position: relative;left:1.45rem;}
+		ul.input_info li>textarea{width: calc(5.6rem - 22px);height:calc(1.5rem - 2px);font-size:0.24rem;padding:0 10px;line-height: 0.6rem;border:1px solid #6f95e5;border-radius: 5px;color: #333;resize: none;display:block;position: relative;left:1.45rem;}
+		ul.input_info li>img{width: auto;height:auto;min-width:1.45rem;max-width: 5.6rem;display:block;position: relative;left:1.45rem;}
+		input#submit{width:calc(100% - 0.4rem);height:1rem;line-height:1rem;border: 0;color: #fff;background: #6f95e5;border-radius: 5px;margin: 0.3rem 0.2rem 1rem 0.2rem;font-size:0.36rem;font-weight: bold;}
+		div#alertInfo{width: 4.6rem;height:1.2rem;position: absolute;top:50%;left:50%;margin-left: -2.3rem;margin-top: -0.6rem;z-index: 9999999;background: rgba(0,0,0,0.7);color: #fff;text-align: center;line-height:1.2rem;font-size: 0.48rem;font-weight: bold;opacity: 0;}
+		.a-fadein{-webkit-animation:fadein 1.5s;-moz-animation:fadein 1.5s;-ms-animation:fadein 1.5s;animation:fadein 1.5s;}
+		/* 淡入 */
+		@-webkit-keyframes fadein{0%{opacity:0;}15%{opacity:1;}75%{opacity:1;}100%{opacity:0;}}
+		@-moz-keyframes fadein{0%{opacity:0;}15%{opacity:1;}75%{opacity:1;}100%{opacity:0;}}
+		@-ms-keyframes fadein{0%{opacity:0;}15%{opacity:1;}75%{opacity:1;}100%{opacity:0;}}
+		@keyframes fadein{0%{opacity:0;}15%{opacity:1;}75%{opacity:1;}100%{opacity:0;}}
+	</style>
+</head>
+<body>
+	<script type="text/javascript">
+		function imgdragstart() {
+			return false;
+		}
+		for (i in document.images) document.images[i].ondragstart = imgdragstart; //禁止图片左击拖动
+	</script>
+	<div id="main" class="outer">
+        <div class="banner_div">
+            <input type="file" name="img" id="img" style="display: none;" accept="image/*" capture="camera">
+            <div class="bottom_div" onclick="openFile()"><div class="top_div">随手拍</div></div>
+        </div>
+        <div class="title">路况路政上报</div>
+        <ul class="input_info">
+            <li><span>详细地址： <i class="must">*</i></span><input type="text" placeholder="获取当前位置" value="" id="address" name="address"></li>
+            <li><span>姓　　名： <i class="must">*</i></span><input type="text" placeholder="请输入您的姓名" value="" id="name" name="name"></li>
+            <li><span>手机号码： <i class="must">*</i></span><input type="text" placeholder="请输入您的手机号" value="" id="phone" name="phone"></li>
+            <li><span>文字描述： <i class="must">*</i></span><textarea type="text" placeholder="请用文字在此叙述" maxlength="500" name="body" id="body"></textarea></li>
+            <li><span>图片上传： <i class="must">*</i></span><img src="add_img.png" onclick="openFile();" id="pic"></li>
+        </ul>
+
+        <input type="button" value="提 交" id="submit" onclick="submit()">
+
+        <div id="alertDiv" style="width:100%;height:100%;background:rgba(0,0,0,0.6);position: fixed;top:0px;left:0px;z-index:9999;display: none;"></div>
+		<div class="" id="alertInfo" style="display: none;"></div>
+	</div>
+    <div id="allmap" style="display: none;"></div>
+	<script type="text/javascript">
+	function alertInfo(v, b = false){
+		var alertInfo = document.getElementById("alertInfo");
+		// console.log(alertInfo.style.display)
+		if (alertInfo.style.display === "none") {
+            alertInfo.style.display = "block";
+            
+            alertInfo.innerHTML = v;
+
+            if(b){
+                alertInfo.setAttribute("class", "a-fadein");
+
+                setTimeout(function() {
+                    alertInfo.style.display = "none";
+                }, 1600);
+            }else{
+                document.getElementById("alertDiv").style.display = "block";
+                alertInfo.style.background = "rgba(0, 0, 0, 0)";
+                alertInfo.setAttribute("class", "");
+                alertInfo.style.opacity = 1;
+            }
+		}
+	}
+
+	function get_screenPx() {
+		this.w = Number(window.innerWidth ? window.innerWidth : document.documentElement.clientWidth);
+		this.h = Number(window.innerHeight ? window.innerHeight : document.documentElement.clientHeight);
+		this.styleID = document.getElementById("styleID");
+	}
+
+	get_screenPx.prototype = {
+		method_screenPx: function() {
+			if (this.w > 750) {
+				if (privateFun.isAndroid() && !privateFun.isPad()) {
+					this.w = parseInt(this.w / 2.3671); //处理Retina屏幕
+					this.styleID.innerHTML = 'html {font-size: ' + parseFloat(this.w / 7.5) + 'px;}';
+				} else {
+					this.styleID.innerHTML = 'html {font-size: ' + parseFloat(this.w / 7.5) + 'px;}';
+				}
+			} else {
+				this.styleID.innerHTML = 'html {font-size: ' + parseFloat(this.w / 7.5) + 'px;}';
+			}
+		}
+	}
+
+	var privateFun = {
+		logic_screenPx: function() {
+			var screenPx = new get_screenPx();
+			screenPx.method_screenPx();
+
+			this.clear_NewObj(screenPx);
+			return;
+		},
+		clearTime: function() {
+			if (v == "setTimeout") {
+				window.clearTimeout(st);
+			} else if (v == "setInterval") {
+				window.clearInterval(si);
+			}
+			return;
+		},
+		clear_NewObj: function(obj) {
+			for (var key in obj) {
+				delete obj[key];
+			}
+		},
+		//以下存放单方法
+		isAndroid: function() {
+			var u = navigator.userAgent;
+			var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+			var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+			if (isiOS) {
+				return "ios";
+			}
+			if (isAndroid) {
+				return "android";
+			}
+		},
+		isPad: function() {
+			var u = navigator.userAgent;
+			var iipad = u.indexOf('pad') > -1 || u.indexOf('iPad') > -1; //android终端
+			return iipad;
+		},
+	}
+	privateFun.logic_screenPx();
+
+	window.onload = function(){
+		document.getElementById("main").style.opacity = "1";
+	}
+
+	window.onresize = function() {
+		if (window.orientation) {
+			st = setTimeout("privateFun.logic_screenPx()", 150);
+		} else {
+			privateFun.logic_screenPx();
+		}
+	}
+    </script>
+    
+    <script src="/js/tools.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YvEDBXGqu4Rrd126TZCkuowRq4zZ8DmM"></script>
+    <script>
+        openFile = function(){
+            document.getElementById("img").click();
+        }
+
+        document.getElementById("img").onchange = function(){
+            var fil = this.files;
+            if(fil.length <= 0){
+                document.getElementById("pic").src = "add_img.png";
+            }
+            for (var i = 0; i < fil.length; i++) {
+                var reader = new FileReader();
+                reader.onload = function(evt){
+                    document.getElementById("pic").src = evt.target.result;
+                }
+                reader.readAsDataURL(fil[i]);
+            }
+        };
+
+        submit = function(){
+            document.getElementById("address").value = document.getElementById("address").value.trim();
+            document.getElementById("name").value = document.getElementById("name").value.trim();
+            document.getElementById("phone").value = document.getElementById("phone").value.trim();
+            document.getElementById("body").value = document.getElementById("body").value.trim();
+            if(document.getElementById("address").value == ""){
+                alertInfo("请输入地址", true);
+                return;
+            }
+            if(document.getElementById("name").value == ""){
+                alertInfo("请输入姓名", true);
+                return;
+            }
+            if(document.getElementById("phone").value == ""){
+                alertInfo("请输入手机号码", true);
+                return;
+            }
+            if(document.getElementById("body").value == ""){
+                alertInfo("请输入文字描述", true);
+                return;
+            }
+            if(document.getElementById("img").files.length <= 0){
+                alertInfo("请选择图片", true);
+                return;
+            }
+            var url = "/api/report/add";
+            var param = new FormData();
+            param.append("image", document.getElementById("img").files[0]);
+            param.append("body", document.getElementById("body").value);
+            param.append("name", document.getElementById("name").value);
+            param.append("phone", document.getElementById("phone").value);
+            param.append("address", document.getElementById("address").value);
+
+            var callback = function(){
+                alertInfo("提交成功<br>请关闭页面");
+            }
+            var errorback = function(){
+                alertInfo("提交失败");
+            }
+            tools.postfile(url, param, callback, errorback)
+        }
+
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(r){
+        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            map.panTo(r.point);
+            //alert('您的位置：'+r.point.lng+','+r.point.lat);
+            var pt = r.point;
+            var geoc = new BMap.Geocoder();
+            geoc.getLocation(pt, function(rs){
+                var addComp = rs.addressComponents;
+                // alert(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+                document.getElementById("address").value = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+            });
+        } else {
+            
+        }
+    },{enableHighAccuracy: true})
+    </script>
+</body>
+</html>

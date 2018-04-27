@@ -1,0 +1,208 @@
+{% extends "tranca/admin/base/base.html" %}
+
+{% block body %}
+<div>
+    <div class="page-header"><h1>举报管理</h1></div>
+    <div style="margin-bottom: 20px;">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">添加举报</button>
+    </div>
+    <div>
+        <table class="table table-bordered table-hover">
+           <thead>
+              <tr>
+                <th style="width: 50px;">ID</th>
+                 <th width="140">图片</th>
+                 <th >姓名</th>
+                 <th >电话</th>
+                 <th width="350">地址</th>
+                 <th width="240">创建时间</th>
+                 <th>操作</th>
+              </tr>
+           </thead>
+           <tbody>
+            {% for i, j in reports sorted %}
+              <tr>
+                <td>{{ j.id }}</td>
+                <td><img src="{{ j.image }}" alt="" style="width: 100px;height: 100px;"></td>
+                <td>{{ j.name }}</td>
+                <td>{{ j.phone }}</td>
+                 <td><div style="width: 100%;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ j.address }}</div></td>
+                 <td>{{ todate(j.create_time) }}</td>
+                 <td width="250">
+                     <button class="btn btn-info update" link="/admin/report/info/{{ j.id }}">修改</button>
+                     <button class="btn btn-danger delclass" link="/admin/report/del/{{ j.id }}">删除</button>
+                 </td>
+              </tr>
+            {% endfor %}
+           </tbody>
+        </table>
+    </div>
+    <div id="mypage"></div>
+</div>
+
+            <form class="form-horizontal" role="form" action="{{ urlfor("admin/ddy/addreport") }}" method="post" enctype ="multipart/form-data" runat="server">
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog" style="width: 90%">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               添加举报
+            </h4>
+         </div>
+         <div class="modal-body">
+                <div class="form-group">
+                   <label for="name" class="col-sm-3 control-label">姓名：</label>
+                   <div class="col-sm-9">
+                      <input class="form-control" id="name" name="name" style="" maxlength="500" ></input>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label for="phone" class="col-sm-3 control-label">电话：</label>
+                   <div class="col-sm-9">
+                      <input class="form-control" id="phone" name="phone" style="" maxlength="500" ></input>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label for="address" class="col-sm-3 control-label">地址：</label>
+                   <div class="col-sm-9">
+                      <input class="form-control" id="address" name="address" style="" maxlength="500" ></input>
+                   </div>
+                </div>
+               <div class="form-group">
+                    <div class="form-group" style="text-align: center;" id="icatimg">
+                         
+                    </div>
+                  <label for="image" class="col-sm-3 control-label">举报图片：</label>
+                  <div class="col-sm-9">
+                     <input type="file" class="form-control" id="image" accept="image/*" name="image" runat="server" onchange="previewImage(this, 'icatimg', 100, 100)" ><!--required-->
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="body" class="col-sm-3 control-label">举报描述：</label>
+                  <div class="col-sm-9">
+                     <textarea class="form-control" id="body" name="body" style="height: 300px;" maxlength="500" ></textarea>
+                  </div>
+               </div>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" 
+               data-dismiss="modal">关闭
+            </button>
+            <input type="submit" class="btn btn-primary" value="添加">
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+            </form>
+
+            <form class="form-horizontal" id="uf" role="form" action="" method="post" enctype ="multipart/form-data" runat="server">
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="update" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog" style="width: 90%">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="uLabel">
+               修改举报
+            </h4>
+         </div>
+         <div class="modal-body">
+                <div class="form-group">
+                   <label for="upname" class="col-sm-3 control-label">姓名：</label>
+                   <div class="col-sm-9">
+                      <input class="form-control" id="upname" name="name" style="" maxlength="500" ></input>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label for="upphone" class="col-sm-3 control-label">电话：</label>
+                   <div class="col-sm-9">
+                      <input class="form-control" id="upphone" name="phone" style="" maxlength="500" ></input>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label for="upaddress" class="col-sm-3 control-label">地址：</label>
+                   <div class="col-sm-9">
+                      <input class="form-control" id="upaddress" name="address" style="" maxlength="500" ></input>
+                   </div>
+                </div>
+                <div class="form-group">
+                     <div class="form-group" style="text-align: center;" id="upicatimg">
+                          
+                     </div>
+                   <label for="upimage" class="col-sm-3 control-label">举报图片：</label>
+                   <div class="col-sm-9">
+                      <input type="file" class="form-control" id="upimage" accept="image/*" name="image" runat="server" onchange="previewImage(this, 'upicatimg', 100, 100)" ><!--required-->
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label for="upbody" class="col-sm-3 control-label">举报描述：</label>
+                   <div class="col-sm-9">
+                      <textarea class="form-control" id="upbody" name="body" style="height: 300px;" maxlength="500" ></textarea>
+                   </div>
+                </div>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" 
+               data-dismiss="modal">关闭
+            </button>
+            <input type="submit" class="btn btn-primary" value="更新">
+         </div>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+        </form>
+        
+<style type="text/css">
+.edui-default {/*z-index: 9005!important;*/}
+.modal{z-index: 999;}
+.modal-backdrop{z-index: 998;}
+.nmenu{z-index: 997;}
+.navbar-fixed-top{z-index: 997;}
+</style>
+
+<script type="text/javascript">
+    page = "report";
+    pclass = "reportlist";
+
+    start = function(){
+        $('.delclass').click(function(){
+            if(confirm("是否确认删除")){
+                alink(this, function(data){
+                    if(data=="0"){
+                        bAlert("删除失败");
+                    }else{
+                        bAlert("删除成功");
+                        location.reload()
+                    }
+                });
+            }
+        });
+        $('.update').click(function(){
+            alink(this, function(data){
+                data = data.report;
+                // alert(data.toString());
+                $('#uf').attr('action', '/admin/report/update/'+data.id);
+                
+                $('#upname').val(data.name)
+                $('#upphone').val(data.phone)
+                $('#upaddress').val(data.address)
+                $('#upbody').val(data.body)
+                $('#upicatimg').html('<img src="'+data.image+'" style="width: 100px;height: 100px;">')
+                $('#upimage').val('')
+                $('#update').modal();
+            });
+        });
+        ipage.create('#mypage', {{ total }}, {{ size }});
+    }
+</script>
+{% endblock %}

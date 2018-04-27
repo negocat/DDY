@@ -330,31 +330,35 @@ func (m *DB) Insert(param map[string]interface{}) (num int, err error) {
 
 		return 0, errors.New("mysql not connect")
 	}
+	var set []string
 	var keys []string
-	var values []string
+	var values []interface{}
 	if len(m.pk) != 0 {
 		delete(param, m.pk)
 	}
 	for key, value := range param {
 		keys = append(keys, key)
-		switch value.(type) {
-		case int, int64, int32:
-			values = append(values, fmt.Sprintf("%v", value.(int)))
-		case string:
-			value = strings.Replace(value.(string), "\\", "\\\\", -1)
-			value = strings.Replace(value.(string), "'", "\\'", -1)
-			value = strings.Replace(value.(string), "\"", "\\\"", -1)
-			values = append(values, value.(string))
-		case float32, float64:
-			values = append(values, strconv.FormatFloat(value.(float64), 'f', -1, 64))
+		// switch value.(type) {
+		// case int, int64, int32:
+		// 	values = append(values, fmt.Sprintf("%v", value.(int)))
+		// case string:
+		// 	value = strings.Replace(value.(string), "\\", "\\\\", -1)
+		// 	value = strings.Replace(value.(string), "'", "\\'", -1)
+		// 	value = strings.Replace(value.(string), "\"", "\\\"", -1)
+		// 	values = append(values, value.(string))
+		// case float32, float64:
+		// 	values = append(values, strconv.FormatFloat(value.(float64), 'f', -1, 64))
 
-		}
+		// }
+		set = append(set, "?")
+		values = append(values, value)
 
 	}
-	fileValue := "'" + strings.Join(values, "','") + "'"
+	fileValue := strings.Join(set, ",")
 	fileds := "`" + strings.Join(keys, "`,`") + "`"
 	sql := fmt.Sprintf("INSERT INTO %v (%v) VALUES (%v)", m.tablename, fileds, fileValue)
-	result, err := m.Conn.Exec(sql)
+	fmt.Println(sql)
+	result, err := m.Conn.Exec(sql, values...)
 	if err != nil {
 		defer func() {
 			if err := recover(); err != nil {
@@ -387,28 +391,28 @@ func (m *DB) Update(param map[string]interface{}) (num int, err error) {
 
 		return 0, errors.New("mysql not connect")
 	}
-	var setValue []string
+	var setValue []interface{}
+	var set []string
 	for key, value := range param {
-		switch value.(type) {
-		case int, int64, int32:
-			set := fmt.Sprintf("`%v` = %v", key, value)
-			setValue = append(setValue, set)
-		case string:
-			value = strings.Replace(value.(string), "\\", "\\\\", -1)
-			value = strings.Replace(value.(string), "'", "\\'", -1)
-			value = strings.Replace(value.(string), "\"", "\\\"", -1)
-			set := fmt.Sprintf("`%v` = '%v'", key, value.(string))
-			setValue = append(setValue, set)
-		case float32, float64:
-			set := fmt.Sprintf("`%v` = '%v'", key, strconv.FormatFloat(value.(float64), 'f', -1, 64))
-			setValue = append(setValue, set)
-		}
+		// switch value.(type) {
+		// case int, int64, int32:
+		// 	set := fmt.Sprintf("`%v` = %v", key, value)
+		// 	setValue = append(setValue, set)
+		// case string:
+		// 	set := fmt.Sprintf("`%v` = '%v'", key, value.(string))
+		// 	setValue = append(setValue, set)
+		// case float32, float64:
+		// 	set := fmt.Sprintf("`%v` = '%v'", key, strconv.FormatFloat(value.(float64), 'f', -1, 64))
+		// 	setValue = append(setValue, set)
+		// }
+		set = append(set, fmt.Sprintf("`%v` = %v", key, "?"))
+		setValue = append(setValue, value)
 
 	}
-	setData := strings.Join(setValue, ",")
+	setData := strings.Join(set, ",")
 	sql := fmt.Sprintf("UPDATE %v SET %v %v", m.tablename, setData, m.where)
-	fmt.Println(sql)
-	result, err := m.Conn.Exec(sql)
+	fmt.Println(sql, setValue)
+	result, err := m.Conn.Exec(sql, setValue...)
 	// fmt.Println(sql)
 	if err != nil {
 		defer func() {

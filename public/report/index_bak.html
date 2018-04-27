@@ -1,0 +1,163 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>举报</title>
+        <meta name="viewport" content="width=device-width,height=device-heght,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    </head>
+    <style>
+        .btn-primary {
+            background-color: #1ab394;
+            border-color: #1ab394;
+            color: #FFFFFF;
+        }
+        .btn {
+            border-radius: 3px;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+            line-height: 1.5;
+            border-radius: 3px;
+        }
+        .btn-primary {
+            color: #fff;
+            background-color: #337ab7;
+            border-color: #2e6da4;
+        }
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+    </style>
+    <body>
+        <div style="padding:1rem;">
+            <div>
+                <div style="width: 20%;float: left;">
+                    <b style="color: red;">*</b>照片：
+                </div>
+                <div style="width: 80%;margin-left: 20%;">
+                    <img src="/admin/image/icon_add.png" alt="" style="width: 100px;" onclick="openFile();" id="pic">
+                    <input type="file" name="img" id="img" style="display: none;" accept="image/*" capture="camera">
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <div style="width: 20%;float: left;">
+                    <b style="color: red;">*</b>地址：
+                </div>
+                <div style="width: 80%;margin-left: 20%;">
+                    <input type="text" id="address" name="address" style="width: 100%;" >
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <div style="width: 20%;float: left;">
+                    <b style="color: red;">*</b>姓名：
+                </div>
+                <div style="width: 80%;margin-left: 20%;">
+                    <input type="text" id="name" name="name" style="width: 100%;" >
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <div style="width: 20%;float: left;">
+                    <b style="color: red;">*</b>手机：
+                </div>
+                <div style="width: 80%;margin-left: 20%;">
+                    <input type="text" id="phone" name="phone" style="width: 100%;" >
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <div style="width: 20%;float: left;">
+                    <b style="color: red;">*</b>描述：
+                </div>
+                <div style="width: 80%;margin-left: 20%;">
+                    <textarea style="width: 100%;height: 200px;" maxlength="500" name="body" id="body"></textarea>
+                </div>
+            </div>
+            <div style="padding: 1rem;margin-top: 50px;">
+                <button class="btn btn-sm btn-primary" style="width: 100%;" onclick="submit()">提交</button>
+            </div>
+        </div>
+        <div id="allmap"></div>
+    </body>
+    <script src="/js/tools.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YvEDBXGqu4Rrd126TZCkuowRq4zZ8DmM"></script>
+    <script>
+        openFile = function(){
+            document.getElementById("img").click();
+        }
+
+        document.getElementById("img").onchange = function(){
+            var fil = this.files;
+            if(fil.length <= 0){
+                document.getElementById("pic").src = "/admin/image/icon_add.png";
+            }
+            for (var i = 0; i < fil.length; i++) {
+                var reader = new FileReader();
+                reader.onload = function(evt){
+                    document.getElementById("pic").src = evt.target.result;
+                }
+                reader.readAsDataURL(fil[i]);
+            }
+        };
+
+        submit = function(){
+            if(document.getElementById("img").files.length <= 0){
+                alert("请选择图片");
+                return;
+            }
+            if(document.getElementById("body").value == ""){
+                alert("请输入描述");
+                return;
+            }
+            var url = "/api/report/add";
+            var param = new FormData();
+            param.append("image", document.getElementById("img").files[0]);
+            param.append("body", document.getElementById("body").value);
+            param.append("name", document.getElementById("name").value);
+            param.append("phone", document.getElementById("phone").value);
+            param.append("address", document.getElementById("address").value);
+
+            var callback = function(){
+                alert("提交成功")
+            }
+            var errorback = function(){
+                alert("提交失败")
+            }
+            tools.postfile(url, param, callback, errorback)
+        }
+
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(r){
+        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            map.panTo(r.point);
+            //alert('您的位置：'+r.point.lng+','+r.point.lat);
+            var pt = r.point;
+            var geoc = new BMap.Geocoder();
+            geoc.getLocation(pt, function(rs){
+                var addComp = rs.addressComponents;
+                // alert(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+                document.getElementById("address").value = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+            });
+        } else {
+            
+        }
+    },{enableHighAccuracy: true})
+    </script>
+</html>

@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="/favicon.png">
     <title>{{ conf.app.admin_name }}</title>
-    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
     <!-- Bootstrap core CSS -->
     <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
@@ -56,14 +56,14 @@
         </div>
         <div class="navbar-collapse collapse cmenu">
           <ul class="nav navbar-nav navbar-right">
-            <li class="imenu" plink="#navbar" p="ddy" id="ddyl"><a href="#">ddy</a></li>
-            <li class="imenu" plink="#navbar" p="tranca" id="trancal"><a href="#">tranca</a></li>
+            <!-- <li class="imenu" plink="#navbar" p="ddy" id="ddyl"><a href="#">ddy</a></li>
+            <li class="imenu" plink="#navbar" p="tranca" id="trancal"><a href="#">tranca</a></li> -->
             <!-- <li class="active imenu" plink="#navbar" p="toppage"><a href="#">官网</a></li> -->
             <!-- <li class="imenu" plink="#navbar" p="shop" id="shopl" ><a href="#">商城管理</a></li> -->
-            <!-- <li class="imenu" plink="#navbar" p="qrcode" id="qrcodel" ><a href="#">二维码管理</a></li>
-            <li class="imenu" plink="#navbar" p="distributor" id="distributorl" ><a href="#">分销商管理</a></li> -->
-            <li class="imenu" plink="#navbar" p="weixin" id="weixinl" ><a href="#">公众号管理</a></li>
-            <!-- <li class="imenu" plink="#navbar" p="system" id="systeml" ><a href="#">系统设置</a></li> -->
+            <!-- <li class="imenu" plink="#navbar" p="qrcode" id="qrcodel" ><a href="#">二维码管理</a></li> -->
+            <li class="imenu" plink="#navbar" p="report" id="reportl"><a href="#">举报</a></li>
+            <!-- <li class="imenu" plink="#navbar" p="weixin" id="weixinl" ><a href="#">公众号管理</a></li> -->
+            <li class="imenu" plink="#navbar" p="system" id="systeml" ><a href="#">系统设置</a></li>
           </ul>
         </div>
       </div>
@@ -74,7 +74,9 @@
         <div class="col-sm-3 col-md-2 sidebar panel-group nmenu"  id="navbar" style="" >
             {% include "tranca/admin/base/ddy.html" %}
             {% include "tranca/admin/base/tranca.html" %}
+            {% include "tranca/admin/base/report.html" %}
             {% include "tranca/admin/base/weixinlist.html" %}
+            {% include "tranca/admin/base/systemlist.html" %}
         </div>
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="mbody" style="">
@@ -133,6 +135,10 @@
     function bAlert(data){
         $('#bootAlertBody').html(data);
         $('#bootAlert').modal();
+    }
+    var imenu = document.getElementsByClassName('panel panel-default');
+    for(i=0;i<imenu.length;i++){
+      $(imenu[i]).css('display', 'none');
     }
     $(document).ready(function(){
         // palert.link('/admin/shoplist', '#navbar');

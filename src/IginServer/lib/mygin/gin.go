@@ -17,6 +17,14 @@ type IContext struct {
 	*gin.Context
 }
 
+func (this *IContext) DelSession(key string) {
+	if this.session == nil {
+		this.session = session.GetSession(this.Writer, this.Request)
+	}
+	delete(this.session, key)
+	this.isChangeSession = true
+}
+
 func (this *IContext) SetSession(key string, value interface{}) {
 	if this.session == nil {
 		this.session = session.GetSession(this.Writer, this.Request)
