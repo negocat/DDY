@@ -11,9 +11,13 @@
 		</style>
 	<![endif]-->	
 	<style type="text/css" id="styleID"></style>
-	<style type="text/css">
+    <style type="text/css">
+        input{
+            -webkit-appearance:none;
+            outline:none
+        }
 		ul {list-style:none;}
-		input,textarea{overflow: hidden;white-space:nowrap;text-overflow: ellipsis;-ms-text-overflow: ellipsis;-o-text-overflow: ellipsis;-webkit-text-overflow: ellipsis;}
+		input{overflow: hidden;white-space:nowrap;text-overflow: ellipsis;-ms-text-overflow: ellipsis;-o-text-overflow: ellipsis;-webkit-text-overflow: ellipsis;}
 		html,body,div,input,img,ul,li{padding:0;margin: 0;}
 		html,body,#main{width:100%;height:100%;overflow-x:hidden;overflow-y: auto;}
 		#main{opacity: 0;}
@@ -27,7 +31,7 @@
 		ul.input_info li>span{width:1.45rem;height:0.6rem;line-height:0.6rem;color: #6f95e5;font-size: 0.24rem;display:block;position: absolute;left:0;top:0;}
 		ul.input_info li>span i.must{width:0.18rem;height:0.18rem;line-height: 0.18rem;font-size:0.24rem;color: #ff6666;position:absolute;top:0.1rem;right:0.05rem;}
 		ul.input_info li>input{width: calc(5.6rem - 22px);height:calc(0.6rem - 2px);font-size:0.24rem;padding:0 10px;line-height: 0.6rem;border:1px solid #6f95e5;border-radius: 5px;color: #333;display:block;position: relative;left:1.45rem;}
-		ul.input_info li>textarea{width: calc(5.6rem - 22px);height:calc(1.5rem - 2px);font-size:0.24rem;padding:0 10px;line-height: 0.6rem;border:1px solid #6f95e5;border-radius: 5px;color: #333;resize: none;display:block;position: relative;left:1.45rem;}
+		ul.input_info li>textarea{width: calc(5.6rem - 22px);height:calc(1.5rem - 2px);font-size:0.24rem;padding:10px 10px;border:1px solid #6f95e5;border-radius: 5px;color: #333;resize: none;display:block;position: relative;left:1.45rem;}
 		ul.input_info li>img{width: auto;height:auto;min-width:1.45rem;max-width: 5.6rem;display:block;position: relative;left:1.45rem;}
 		input#submit{width:calc(100% - 0.4rem);height:1rem;line-height:1rem;border: 0;color: #fff;background: #6f95e5;border-radius: 5px;margin: 0.3rem 0.2rem 1rem 0.2rem;font-size:0.36rem;font-weight: bold;}
 		div#alertInfo{width: 4.6rem;height:1.2rem;position: absolute;top:50%;left:50%;margin-left: -2.3rem;margin-top: -0.6rem;z-index: 9999999;background: rgba(0,0,0,0.7);color: #fff;text-align: center;line-height:1.2rem;font-size: 0.48rem;font-weight: bold;opacity: 0;}
@@ -48,7 +52,7 @@
 	</script>
 	<div id="main" class="outer">
         <div class="banner_div">
-            <input type="file" name="img" id="img" style="display: none;" accept="image/*" capture="camera">
+            <input type="file" name="img" id="img" style="display: none;" accept="image/*" icapture="camera">
             <div class="bottom_div" onclick="openFile()"><div class="top_div">随手拍</div></div>
         </div>
         <div class="title">路况路政上报</div>
@@ -57,7 +61,10 @@
             <li><span>姓　　名： <i class="must">*</i></span><input type="text" placeholder="请输入您的姓名" value="" id="name" name="name"></li>
             <li><span>手机号码： <i class="must">*</i></span><input type="text" placeholder="请输入您的手机号" value="" id="phone" name="phone"></li>
             <li><span>文字描述： <i class="must">*</i></span><textarea type="text" placeholder="请用文字在此叙述" maxlength="500" name="body" id="body"></textarea></li>
-            <li><span>图片上传： <i class="must">*</i></span><img src="add_img.png" onclick="openFile();" id="pic"></li>
+            <li>
+                <span>图片上传： <i class="must">*</i></span>
+                <img src="add_img.png" onclick="openFile();" id="pic">
+            </li>
         </ul>
 
         <input type="button" value="提 交" id="submit" onclick="submit()">
@@ -70,12 +77,15 @@
 	function alertInfo(v, b = false){
 		var alertInfo = document.getElementById("alertInfo");
 		// console.log(alertInfo.style.display)
-		if (alertInfo.style.display === "none") {
+		if (true) { //alertInfo.style.display === "none"
             alertInfo.style.display = "block";
             
             alertInfo.innerHTML = v;
 
             if(b){
+                document.getElementById("alertDiv").style.display = "none";
+                alertInfo.style.background = "rgba(0, 0, 0, 7)";
+                alertInfo.style.opacity = 0;
                 alertInfo.setAttribute("class", "a-fadein");
 
                 setTimeout(function() {
@@ -165,7 +175,7 @@
 	}
     </script>
     
-    <script src="/js/tools.js"></script>
+    <script src="/js/tools.js?1"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YvEDBXGqu4Rrd126TZCkuowRq4zZ8DmM"></script>
     <script>
         openFile = function(){
@@ -181,6 +191,16 @@
                 var reader = new FileReader();
                 reader.onload = function(evt){
                     document.getElementById("pic").src = evt.target.result;
+                    console.log(evt.target.result.length);
+                    document.getElementById("pic").onload = function(){
+                        // try{
+                            var d = tools.compressBase64Image(document.getElementById("pic"), 1080);
+                            document.getElementById("pic").onload = undefined;
+                            document.getElementById("pic").src = d;
+                            console.log(d.length);
+                        //     alert(d.length);
+                        // }catch(err){alert(err)}
+                    }
                 }
                 reader.readAsDataURL(fil[i]);
             }
@@ -225,6 +245,7 @@
             var errorback = function(){
                 alertInfo("提交失败");
             }
+            alertInfo("请稍后...");
             tools.postfile(url, param, callback, errorback)
         }
 

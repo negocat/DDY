@@ -25,7 +25,7 @@ import (
 
 func Add(c *gin.Context) {
 
-	path, _ := upload.ImgSave(c.Request, "image", 0, 0, "0")
+	path, _ := upload.ImgSave(c.Request, "image", 800, 2000, "0")
 
 	param := map[string]interface{}{
 		"update_at":         0,

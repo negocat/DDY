@@ -10,7 +10,7 @@ import (
 func SetPassword(password, uid string) {
 	db := mysqldb.GetConnect()
 
-	param := map[string]interface{}{"password": password}
+	param := map[string]interface{}{"passwd": password}
 
 	db.SetTable("admin_auth").Where("id = " + uid).Update(param)
 }

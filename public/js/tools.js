@@ -727,6 +727,31 @@ tools.isWeiXin = function(){
     }
 }
 
+tools.compressBase64Image = function(img, square){
+    // var square = 640;
+    var canvas = document.createElement('canvas');
+    canvas.width = square;
+    canvas.height = square;
+    var context = canvas.getContext('2d');
+    context.clearRect(0, 0, square, square);
+    var imageWidth;
+    var imageHeight;
+    var offsetX = 0;
+    var offsetY = 0;
+    if (img.width > img.height) {  
+      imageWidth = Math.round(square * img.width / img.height);
+      imageHeight = square;
+      offsetX = - Math.round((imageWidth - square) / 2);
+    } else {  
+      imageHeight = Math.round(square * img.height / img.width);
+      imageWidth = square;
+      offsetY = - Math.round((imageHeight - square) / 2);
+    }  
+    context.drawImage(img, offsetX, offsetY, imageWidth, imageHeight);
+    var data = canvas.toDataURL('image/jpeg');
+    return data;
+}
+
 tools.getProductList = function(callback){
     tools.get("/api/product/list", {}, callback);
 }

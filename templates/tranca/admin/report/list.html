@@ -15,6 +15,7 @@
                  <th >姓名</th>
                  <th >电话</th>
                  <th width="350">地址</th>
+                 <th width="350">描述</th>
                  <th width="240">创建时间</th>
                  <th>操作</th>
               </tr>
@@ -23,10 +24,11 @@
             {% for i, j in reports sorted %}
               <tr>
                 <td>{{ j.id }}</td>
-                <td><img src="{{ j.image }}" alt="" style="width: 100px;height: 100px;"></td>
+                <td><img onclick="catimg(this)" src="{{ j.image }}" alt="" style="width: 100px;height: 100px;cursor:-webkit-zoom-in;"></td>
                 <td>{{ j.name }}</td>
                 <td>{{ j.phone }}</td>
                  <td><div style="width: 100%;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ j.address }}</div></td>
+                 <td><div style="width: 100%;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ j.body }}</div></td>
                  <td>{{ todate(j.create_time) }}</td>
                  <td width="250">
                      <button class="btn btn-info update" link="/admin/report/info/{{ j.id }}">修改</button>
@@ -44,7 +46,7 @@
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
    aria-labelledby="myModalLabel" aria-hidden="true">
-   <div class="modal-dialog" style="width: 90%">
+   <div class="modal-dialog" style="width: 90%;">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" 
@@ -75,18 +77,18 @@
                    </div>
                 </div>
                <div class="form-group">
-                    <div class="form-group" style="text-align: center;" id="icatimg">
-                         
-                    </div>
-                  <label for="image" class="col-sm-3 control-label">举报图片：</label>
-                  <div class="col-sm-9">
-                     <input type="file" class="form-control" id="image" accept="image/*" name="image" runat="server" onchange="previewImage(this, 'icatimg', 100, 100)" ><!--required-->
-                  </div>
-               </div>
-               <div class="form-group">
                   <label for="body" class="col-sm-3 control-label">举报描述：</label>
                   <div class="col-sm-9">
                      <textarea class="form-control" id="body" name="body" style="height: 300px;" maxlength="500" ></textarea>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="image" class="col-sm-3 control-label">举报图片：</label>
+                  <div class="col-sm-9">
+                     <input type="file" class="form-control" id="image" accept="image/*" name="image" runat="server" onchange="previewImage(this, 'icatimg', 0, 0)" ><!--required-->
+                     <div style="text-align: center;" id="icatimg">
+                          
+                     </div>
                   </div>
                </div>
          </div>
@@ -136,18 +138,18 @@
                    </div>
                 </div>
                 <div class="form-group">
-                     <div class="form-group" style="text-align: center;" id="upicatimg">
-                          
-                     </div>
-                   <label for="upimage" class="col-sm-3 control-label">举报图片：</label>
-                   <div class="col-sm-9">
-                      <input type="file" class="form-control" id="upimage" accept="image/*" name="image" runat="server" onchange="previewImage(this, 'upicatimg', 100, 100)" ><!--required-->
-                   </div>
-                </div>
-                <div class="form-group">
                    <label for="upbody" class="col-sm-3 control-label">举报描述：</label>
                    <div class="col-sm-9">
                       <textarea class="form-control" id="upbody" name="body" style="height: 300px;" maxlength="500" ></textarea>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label for="upimage" class="col-sm-3 control-label">举报图片：</label>
+                   <div class="col-sm-9">
+                      <input type="file" class="form-control" id="upimage" accept="image/*" name="image" runat="server" onchange="previewImage(this, 'upicatimg', 0, 0)" ><!--required-->
+                      <div style="text-align: center;" id="upicatimg">
+                           
+                      </div>
                    </div>
                 </div>
          </div>
@@ -161,6 +163,39 @@
     </div>
 </div><!-- /.modal -->
         </form>
+
+        <!-- 模态框（Modal） -->
+<div class="modal fade" id="catimg" tabindex="-1" role="dialog" 
+aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="width: 90%;max-width: 800px;">
+   <div class="modal-content">
+      <div class="modal-header">
+         <button type="button" class="close" 
+            data-dismiss="modal" aria-hidden="true">
+               &times;
+         </button>
+         <h4 class="modal-title" id="myModalLabel">
+            查看图片
+         </h4>
+      </div>
+      <div class="modal-body">
+            <div style="text-align: center;">
+                  <button type="button" class="btn btn-default" onclick="leftRotate()" >往左转</button>
+                  <button type="button" class="btn btn-default" onclick="rightRotate()" >往右转</button>
+            </div>
+          <div>
+                <img style="width: 100%;display: none;" id="catimgdiv" >
+                <canvas style="width: 100%;" id="catimgsrc"></canvas>
+          </div>
+      </div>
+      <div class="modal-footer">
+         <button type="button" class="btn btn-default" 
+            data-dismiss="modal">关闭
+         </button>
+      </div>
+   </div><!-- /.modal-content -->
+ </div>
+</div><!-- /.modal -->
         
 <style type="text/css">
 .edui-default {/*z-index: 9005!important;*/}
@@ -169,10 +204,106 @@
 .nmenu{z-index: 997;}
 .navbar-fixed-top{z-index: 997;}
 </style>
-
+<script src="/js/hidpi-canvas.min.js"></script>
 <script type="text/javascript">
     page = "report";
     pclass = "reportlist";
+
+    var canvas = document.getElementById("catimgsrc");
+    var ctx = canvas.getContext("2d");
+    var rotate = 0;
+
+    // polyfill 提供了这个方法用来获取设备的 pixel ratio
+    var getPixelRatio = function(context) {
+        var backingStore = context.backingStorePixelRatio ||
+            context.webkitBackingStorePixelRatio ||
+            context.mozBackingStorePixelRatio ||
+            context.msBackingStorePixelRatio ||
+            context.oBackingStorePixelRatio ||
+            context.backingStorePixelRatio || 1;
+    
+        return (window.devicePixelRatio || 1) / backingStore;
+    };
+
+    var ratio = getPixelRatio(ctx);
+
+    catimg = function(t){
+        rotate = 0;
+        document.getElementById("catimgdiv").style.display = 'none';
+        document.getElementById("catimgsrc").style.display = 'block';
+        document.getElementById("catimgdiv").onload = function(){
+            var swidth = document.getElementById("catimgdiv").width;
+            var sheight = document.getElementById("catimgdiv").height;
+            
+            canvas.height = canvas.width/swidth*sheight;
+            
+            ctx.drawImage(document.getElementById("catimgdiv"), 0, 0, swidth, sheight, 0, 0, canvas.width*ratio, canvas.height*ratio);
+        }
+        document.getElementById("catimgdiv").src = t.src;
+        $('#catimg').modal();
+    }
+    leftRotate = function(){
+        document.getElementById("catimgdiv").style.display = 'none';
+        document.getElementById("catimgsrc").style.display = 'block';
+        var swidth = document.getElementById("catimgdiv").width;
+        var sheight = document.getElementById("catimgdiv").height;
+        
+        canvas.height = canvas.width/swidth*sheight;
+
+        var width = 0;
+        var height = 0;
+        rotate -= 90;
+        if(rotate%180 == 90 || rotate%180 == -90){
+            var x = canvas.width;
+            var y = x/sheight*swidth;
+            canvas.height = x;
+        }
+        if(rotate%360 == 90 || rotate%360 == -270){
+            width = canvas.width;
+            height = 0;
+        }else if(rotate%360 == -90 || rotate%360 == 270){
+            width = 0;
+            height = canvas.height;
+        }else if(rotate%360 == -180 || rotate%360 == 180){
+            width = canvas.width;
+            height = canvas.height;
+        }
+        
+        ctx.translate(width, height);
+        ctx.rotate(rotate*Math.PI/180);
+        ctx.drawImage(document.getElementById("catimgdiv"), 0, 0, swidth, sheight, 0, 0, canvas.width, canvas.height);
+    }
+    rightRotate = function(){
+        document.getElementById("catimgdiv").style.display = 'none';
+        document.getElementById("catimgsrc").style.display = 'block';
+        var swidth = document.getElementById("catimgdiv").width;
+        var sheight = document.getElementById("catimgdiv").height;
+        
+        canvas.height = canvas.width/swidth*sheight;
+
+        var width = 0;
+        var height = 0;
+        rotate += 90;
+        if(rotate%180 == 90 || rotate%180 == -90){
+            var x = canvas.width;
+            var y = x/sheight*swidth;
+            canvas.height = x;
+        }
+        if(rotate%360 == 90 || rotate%360 == -270){
+            width = canvas.width;
+            height = 0;
+        }else if(rotate%360 == -90 || rotate%360 == 270){
+            width = 0;
+            height = canvas.height;
+        }else if(rotate%360 == -180 || rotate%360 == 180){
+            width = canvas.width;
+            height = canvas.height;
+        }
+        
+        ctx.translate(width, height);
+        ctx.rotate(rotate*Math.PI/180);
+        ctx.drawImage(document.getElementById("catimgdiv"), 0, 0, swidth, sheight, 0, 0, canvas.width, canvas.height);
+    }
 
     start = function(){
         $('.delclass').click(function(){
@@ -197,7 +328,7 @@
                 $('#upphone').val(data.phone)
                 $('#upaddress').val(data.address)
                 $('#upbody').val(data.body)
-                $('#upicatimg').html('<img src="'+data.image+'" style="width: 100px;height: 100px;">')
+                $('#upicatimg').html('<img src="'+data.image+'" style="width: 100%;">')
                 $('#upimage').val('')
                 $('#update').modal();
             });

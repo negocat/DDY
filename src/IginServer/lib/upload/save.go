@@ -98,6 +98,41 @@ func ImgSave(req *http.Request, key string, w, h int, param ...string) (string, 
 	return path, err
 }
 
+func ImgStrBase64Save(img string, w, h int, param ...string) (string, error) {
+	
+	limg := strings.Split(img, ";")
+	ty := ""
+	for _, j := range limg[0 : len(limg)-1] {
+		s := strings.Split(j, ":")
+		if s[0] == "data" {
+			ty = s[1]
+		}
+	}
+	data := strings.Split(limg[len(limg)-1], "base64,")[1]
+	b, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		return "", err
+	}
+	if ty == "image/jpeg" || ty == "image/jpg" {
+		param = append(param, ".jpg")
+	} else if ty == "image/png" {
+		param = append(param, ".png")
+	} else if ty == "image/gif" {
+		param = append(param, ".gif")
+	} else if ty == "image/bmp" {
+		param = append(param, ".bmp")
+	}
+	if strings.Index(img_type, "|"+strings.Split(ty, "/")[1]+"|") == -1 {
+		return "", errors.New("-1")
+	}
+	path, err := SaveFile(b, param...)
+	if err != nil {
+		return path, err
+	}
+	// err = image.Thumbnail(path, path, w, h)
+	return path, err
+}
+
 func ImgBase64Save(req *http.Request, w, h int, param ...string) (string, error) {
 	img, err := ioutil.ReadAll(req.Body)
 	if err != nil {
