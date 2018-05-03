@@ -345,6 +345,24 @@ function appendElement(h, str){
         h.appendChild(el.childNodes[i]);
     }
 }
+// 向标签内添加html
+function beforeElement(h, str){
+    var el = document.createElement("div");
+    el.innerHTML = str;
+    for(i = 0;i < el.childNodes.length;i++){
+        // console.log(el.childNodes[i])
+        h.before(el.childNodes[i]);
+    }
+}
+// 向标签内添加html
+function afterElement(h, str){
+    var el = document.createElement("div");
+    el.innerHTML = str;
+    for(i = 0;i < el.childNodes.length;i++){
+        // console.log(el.childNodes[i])
+        h.after(el.childNodes[i]);
+    }
+}
 
 //get参数获取
 function request(paras) {
@@ -727,9 +745,12 @@ tools.isWeiXin = function(){
     }
 }
 
-tools.compressBase64Image = function(img, square){
+tools.compressBase64Image = function(img, square, rotate = 0){
+    img.setAttribute("crossOrigin",'Anonymous')
     // var square = 640;
-    var canvas = document.createElement('canvas');
+    // console.log(img.naturalWidth)
+    // console.log(img.naturalHeight)
+    canvas = document.createElement('canvas');
     canvas.width = square;
     canvas.height = square;
     var context = canvas.getContext('2d');
@@ -738,16 +759,46 @@ tools.compressBase64Image = function(img, square){
     var imageHeight;
     var offsetX = 0;
     var offsetY = 0;
-    if (img.width > img.height) {  
-      imageWidth = Math.round(square * img.width / img.height);
+    if (img.naturalWidth > img.naturalHeight) {  
+      imageWidth = Math.round(square * img.naturalWidth / img.naturalHeight);
       imageHeight = square;
       offsetX = - Math.round((imageWidth - square) / 2);
     } else {  
-      imageHeight = Math.round(square * img.height / img.width);
+      imageHeight = Math.round(square * img.naturalHeight / img.naturalWidth);
       imageWidth = square;
       offsetY = - Math.round((imageHeight - square) / 2);
     }  
-    context.drawImage(img, offsetX, offsetY, imageWidth, imageHeight);
+
+    canvas.width = imageWidth;
+    canvas.height = imageHeight;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle="#000";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    var width = 0;
+    var height = 0;
+    if (rotate%360 == 90 || rotate%360 == -90 || rotate%360 == 270 || rotate%360 == -270){
+        canvas.width = imageHeight;
+        canvas.height = imageWidth;
+    }
+    if(rotate%180 == 90 || rotate%180 == -90){
+        // var x = canvas.width;
+        // var y = x/sheight*swidth;
+        // canvas.height = x;
+    }
+    if(rotate%360 == 90 || rotate%360 == -270){
+        width = canvas.width;
+        height = 0;
+    }else if(rotate%360 == -90 || rotate%360 == 270){
+        width = 0;
+        height = canvas.height;
+    }else if(rotate%360 == -180 || rotate%360 == 180){
+        width = canvas.width;
+        height = canvas.height;
+    }
+    
+    context.translate(width, height);
+    context.rotate(rotate*Math.PI/180);
+    context.drawImage(img, 0, 0, imageWidth, imageHeight);
     var data = canvas.toDataURL('image/jpeg');
     return data;
 }

@@ -1,3 +1,5 @@
+var compressSize = 640;
+
 //字符串格式化
 printf = function() {
     var num = arguments.length;
@@ -289,6 +291,31 @@ function displayProp(obj){
     }  
     document.write(names)
 }
+// base64图片压缩
+compressBase64Image = function(img, square){
+    // var square = 640;
+    var canvas = document.createElement('canvas');
+    canvas.width = square;
+    canvas.height = square;
+    var context = canvas.getContext('2d');
+    context.clearRect(0, 0, square, square);
+    var imageWidth;
+    var imageHeight;
+    var offsetX = 0;
+    var offsetY = 0;
+    if (img.width > img.height) {  
+      imageWidth = Math.round(square * img.width / img.height);
+      imageHeight = square;
+      offsetX = - Math.round((imageWidth - square) / 2);
+    } else {  
+      imageHeight = Math.round(square * img.height / img.width);
+      imageWidth = square;
+      offsetY = - Math.round((imageHeight - square) / 2);
+    }  
+    context.drawImage(img, offsetX, offsetY, imageWidth, imageHeight);
+    var data = canvas.toDataURL('image/jpeg');
+    return data;
+}
 //图片上传
 UploadImg = {"param":{}}
 UploadImg.isstart = 0
@@ -341,8 +368,16 @@ UploadImg.addfile = function(t, files, mid, cat){
             var stmp = function(limg, x){
                 return function(evt){
                     // alert(limg[limg.length - 1].id)
-                    if($(limg[limg.length - 1 - x]).next(".success").attr("style")==undefined)
-                        limg[limg.length - 1 - x].src = evt.target.result;
+                    if($(limg[limg.length - 1 - x]).next(".success").attr("style")==undefined){
+                        var myimg = document.createElement('img');
+                        myimg.onload = function(){
+                            var data = compressBase64Image(this, compressSize);
+                            console.log(data.length);
+                            limg[limg.length - 1 - x].src = data;
+                        }
+                        myimg.src = evt.target.result;
+                        // limg[limg.length - 1 - x].src = evt.target.result;
+                    }
                 }
             }
             var reader = new FileReader();

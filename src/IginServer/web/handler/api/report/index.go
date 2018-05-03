@@ -25,7 +25,12 @@ import (
 
 func Add(c *gin.Context) {
 
-	path, _ := upload.ImgSave(c.Request, "image", 800, 2000, "0")
+	path := ""
+	imgs := c.Request.Form["image"]
+	for _, img := range imgs {
+		imgPath, _ := upload.ImgStrBase64Save(img, 0, 0, "image")
+		path += conf.GetString("config", "IMAGE_HOST") + imgPath + ","
+	}
 
 	param := map[string]interface{}{
 		"update_at":         0,
@@ -33,7 +38,7 @@ func Add(c *gin.Context) {
 		"name":        c.Request.FormValue("name"),
 		"phone":        c.Request.FormValue("phone"),
 		"body":        c.Request.FormValue("body"),
-		"image":      conf.GetString("config", "IMAGE_HOST") + path,
+		"image":      path,
 		"update_time": int(time.Now().Unix()),
 		"create_time": int(time.Now().Unix()),
 	}

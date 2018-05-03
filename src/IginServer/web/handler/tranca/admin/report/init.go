@@ -6,6 +6,7 @@ import (
 	"IginServer/lib/mygin"
 	// "IginServer/lib/mysqldb"
 	"IginServer/web/handler/tranca/admin/auth"
+	"IginServer/framework/ueditor"
 	// "IginServer/web"
 	// "encoding/json"
 	// "fmt"
@@ -21,4 +22,8 @@ func init() {
 	r.GET("/report/del/:id", mygin.Handler(del))
 	r.GET("/report/info/:id", mygin.Handler(info))
 	r.POST("/report/update/:id", mygin.Handler(update))
+	r.POST("/report/controller.php", ueditor.Controller)
+	r.GET("/report/controller.php", ueditor.Controller)
+
+	r.GET("/report/down", mygin.Handler(down))
 }

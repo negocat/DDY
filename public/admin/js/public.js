@@ -1,3 +1,5 @@
+var compressSize = 640;
+
 //字符串格式化
 printf = function() {
     var num = arguments.length;
@@ -259,6 +261,85 @@ function displayProp(obj){
     }  
     document.write(names)
 }
+// base64图片压缩
+compressBase64Image = function(img, square, rotate = 0){
+    img.setAttribute("crossOrigin",'Anonymous')
+    // var square = 640;
+    // console.log(img.naturalWidth)
+    // console.log(img.naturalHeight)
+    canvas = document.createElement('canvas');
+    canvas.width = square;
+    canvas.height = square;
+    var context = canvas.getContext('2d');
+    context.clearRect(0, 0, square, square);
+    var imageWidth;
+    var imageHeight;
+    var offsetX = 0;
+    var offsetY = 0;
+    if (img.naturalWidth > img.naturalHeight) {  
+      imageWidth = Math.round(square * img.naturalWidth / img.naturalHeight);
+      imageHeight = square;
+      offsetX = - Math.round((imageWidth - square) / 2);
+    } else {  
+      imageHeight = Math.round(square * img.naturalHeight / img.naturalWidth);
+      imageWidth = square;
+      offsetY = - Math.round((imageHeight - square) / 2);
+    }  
+
+    canvas.width = imageWidth;
+    canvas.height = imageHeight;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle="#000";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    var width = 0;
+    var height = 0;
+    if (rotate%360 == 90 || rotate%360 == -90 || rotate%360 == 270 || rotate%360 == -270){
+        canvas.width = imageHeight;
+        canvas.height = imageWidth;
+    }
+    if(rotate%180 == 90 || rotate%180 == -90){
+        // var x = canvas.width;
+        // var y = x/sheight*swidth;
+        // canvas.height = x;
+    }
+    if(rotate%360 == 90 || rotate%360 == -270){
+        width = canvas.width;
+        height = 0;
+    }else if(rotate%360 == -90 || rotate%360 == 270){
+        width = 0;
+        height = canvas.height;
+    }else if(rotate%360 == -180 || rotate%360 == 180){
+        width = canvas.width;
+        height = canvas.height;
+    }
+    
+    context.translate(width, height);
+    context.rotate(rotate*Math.PI/180);
+    context.drawImage(img, 0, 0, imageWidth, imageHeight);
+    var data = canvas.toDataURL('image/jpeg');
+    return data;
+}
+//图片旋转
+rotateImg = {
+    img: null,
+    imgSize: 640,
+    rotate: 0,
+    init: function(){
+        this.rotate = 0;
+        console.log(this.rotate);
+        return compressBase64Image(this.img, this.imgSize, this.rotate);
+    },
+    left: function(){
+        this.rotate -= 90;
+        console.log(this.rotate);
+        return compressBase64Image(this.img, this.imgSize, this.rotate);
+    },
+    right: function(){
+        this.rotate += 90;
+        console.log(this.rotate);
+        return compressBase64Image(this.img, this.imgSize, this.rotate);
+    }
+}
 //图片上传
 UploadImg = {"param":{}}
 UploadImg.isstart = 0
@@ -311,8 +392,16 @@ UploadImg.addfile = function(t, files, mid, cat){
             var stmp = function(limg, x){
                 return function(evt){
                     // alert(limg[limg.length - 1].id)
-                    if($(limg[limg.length - 1 - x]).next(".success").attr("style")==undefined)
-                        limg[limg.length - 1 - x].src = evt.target.result;
+                    if($(limg[limg.length - 1 - x]).next(".success").attr("style")==undefined){
+                        var myimg = document.createElement('img');
+                        myimg.onload = function(){
+                            var data = compressBase64Image(this, compressSize);
+                            console.log(data.length);
+                            limg[limg.length - 1 - x].src = data;
+                        }
+                        myimg.src = evt.target.result;
+                        // limg[limg.length - 1 - x].src = evt.target.result;
+                    }
                 }
             }
             var reader = new FileReader();
@@ -326,7 +415,7 @@ UploadImg.addfile = function(t, files, mid, cat){
 UploadImg.clear = function(mid){
     $("."+mid+'-'+'filediv').remove();
 }
-UploadImg.addimg = function(mid, list){
+UploadImg.addimg = function(mid, list, func){
     var idata = $("#"+mid).find("."+mid+"-"+"data");
     var button = $("#"+mid).find("."+mid+"-"+"fbutton");
     var file = $("#"+mid).find("."+mid+"-"+"ffile");
@@ -359,6 +448,7 @@ UploadImg.addimg = function(mid, list){
         }
         
     }
+    if(typeof func == 'function') func(document.getElementsByName(mid+'-'+'fupfile'));
 }
 UploadImg.create = function(mid, url, func, path){
     this.param[mid+"url"] = url;
@@ -438,7 +528,7 @@ UploadImg.create = function(mid, url, func, path){
                             if(UploadImg.isstart == 0){
                                 start.removeAttr('readonly');
                             }
-                            func(data);
+                            func(data, document.getElementsByName(mid+'-'+'fupfile'));
                         },
                         error: function(data){
                             UploadImg.isstart -= 1;

@@ -3,7 +3,7 @@ package report
 import (
 	"IginServer/lib/Imartini"
 	// "IginServer/lib/mygin"
-	// "IginServer/lib/mysqldb"
+	"IginServer/framework/ueditor"
 	// "IginServer/web/handler/api/auth"
 	// "encoding/json"
 	// "fmt"
@@ -15,4 +15,5 @@ import (
 func init() {
 	r := Imartini.M.Group("api/report")
 	r.POST("add", Add)
+	r.POST("uploadimg", ueditor.Controller)
 }

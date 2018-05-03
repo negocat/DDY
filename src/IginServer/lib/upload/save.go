@@ -109,6 +109,7 @@ func ImgStrBase64Save(img string, w, h int, param ...string) (string, error) {
 		}
 	}
 	data := strings.Split(limg[len(limg)-1], "base64,")[1]
+	data = strings.Replace(data, " ", "+", -1)
 	b, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
 		return "", err
