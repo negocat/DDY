@@ -59,6 +59,8 @@ go build -ldflags "-s -w"
 -d  后台运行
 -p 127.0.0.1:33301:22 暴露端口
 -v /home/dock/Downloads:/usr/Download       通过-v参数，冒号前为宿主机目录，必须为绝对路径，冒号后为镜像内挂载的路径。
+-m 1024m --memory-swap=1024m  # 限制内存最大使用（bug：超过后进程被杀死）
+--cpuset-cpus="0,1"           # 限制容器使用CPU
 detach：Ctrl-P + Ctrl-Q 
 退出：Ctrl-Dorexit 
 attach:docker attach CONTAINER-ID 
