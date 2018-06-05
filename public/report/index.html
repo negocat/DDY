@@ -218,7 +218,7 @@
                     img.onload = function(){
                         var base64img = tools.compressBase64Image(this, 640, 0);
                         console.log(base64img.length);
-                        var html = '<li class="img uploadimg" id="pic_1" style="background-image: url('+base64img+' );">';
+                        var html = '<li class="img uploadimg" id="pic_1" img="'+base64img+'" style="background-image: url('+base64img+' );">';
                         html += '<img src="del.png" onclick="remove(this)"></li>';
                         beforeElement(document.getElementById('pic'), html);
                         
@@ -296,8 +296,8 @@
 
             var uploadimg = document.getElementsByClassName("uploadimg");
             for(var i = 0;i < uploadimg.length;i ++){
-                var a = uploadimg[i].style.backgroundImage;
-                param.append('image', a.substr(5, a.length-7).replace(/ /g, ''));
+                var a = uploadimg[i].getAttribute('img');
+                param.append('image', a);
             }
 
             var callback = function(){
