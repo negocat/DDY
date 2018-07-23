@@ -20,8 +20,8 @@
            <tbody>
             {% for i, j in cartoonEpisodes sorted %}
               <tr>
-                <td>第{{ j.id }}集</td>
-                 <td><div style="width: calc({{ j.level }}*30px);float: left;">&nbsp;</div>{{ j.title|safe }}</td>
+                <td>第{{ j.sort }}集</td>
+                 <td>{{ j.title|safe }}</td>
                  <td>{{ todate(j.createtime) }}</td>
                  <td width="250">
                      <button class="btn btn-info update" link="/admin/ddy/cartoonEpisodesInfo/{{ j.id }}">修改</button>

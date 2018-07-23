@@ -47,6 +47,7 @@ func addcartoon(c *mygin.IContext) {
 		"name":        c.Request.FormValue("name"),
 		"classid":     c.Request.FormValue("classid"),
 		"author":      c.Request.FormValue("author"),
+		"score":       c.Request.FormValue("score"),
 		"imgurl":      conf.GetString("config", "IMAGE_HOST") + path,
 		"remarks":     c.Request.FormValue("remarks"),
 		"abstract":    c.Request.FormValue("abstract"),
@@ -96,6 +97,7 @@ func updatecartoon(c *mygin.IContext) {
 	p["name"] = c.Request.FormValue("name")
 	p["classid"] = c.Request.FormValue("classid")
 	p["author"] = c.Request.FormValue("author")
+	p["score"] = c.Request.FormValue("score")
 	p["remarks"] = c.Request.FormValue("remarks")
 	p["abstract"] = c.Request.FormValue("abstract")
 	p["update_time"] = int(time.Now().Unix())

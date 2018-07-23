@@ -14,6 +14,7 @@
                  <th width="140">所属类别</th>
                  <th>漫画名称</th>
                  <th>作者</th>
+                 <th>评分</th>
                  <th width="240">创建时间</th>
                  <th>操作</th>
               </tr>
@@ -25,6 +26,7 @@
                 <td>{{ j.classname }}</td>
                  <td><div style="width: calc({{ j.level }}*30px);float: left;">&nbsp;</div>{{ j.name|safe }}</td>
                  <td>{{ j.author }}</td>
+                 <td>{{ j.score }}</td>
                  <td>{{ todate(j.create_time) }}</td>
                  <td width="250">
                      <button class="btn btn-info update" link="/admin/ddy/cartooninfo/{{ j.id }}">修改</button>
@@ -69,6 +71,12 @@
                   <label for="author" class="col-sm-3 control-label">作者：</label>
                   <div class="col-sm-9">
                      <input type="text" class="form-control" id="author" name="author" placeholder="请输入作者" required>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="score" class="col-sm-3 control-label">评分：</label>
+                  <div class="col-sm-9">
+                     <input type="number" step="0.1" max="10" class="form-control" id="score" name="score" placeholder="请输入评分" required>
                   </div>
                </div>
                <div class="form-group">
@@ -144,6 +152,12 @@
                   <label for="author" class="col-sm-3 control-label">作者：</label>
                   <div class="col-sm-9">
                      <input type="text" class="form-control" id="uauthor" name="author" placeholder="请输入作者" required>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="upscore" class="col-sm-3 control-label">评分：</label>
+                  <div class="col-sm-9">
+                     <input type="number" step="0.1" max="10" class="form-control" id="upscore" name="score" placeholder="请输入评分" required>
                   </div>
                </div>
                <div class="form-group">
@@ -229,6 +243,7 @@
                 updateue.setContent(data.abstract)
                 
                 $('#upclassid').val(data.classid)
+                $('#upscore').val(data.score)
                 $('#uauthor').val(data.author)
                 $('#catimg').html('<img src="'+data.imgurl+'" style="width: 100px;height: 100px;">')
                 $('#uname').val(data.name)
